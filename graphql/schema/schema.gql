@@ -6,11 +6,21 @@ type Event {
   date: String!
 }
 
+type User {
+  id: ID!
+  email: String!
+}
+
 input EventInput {
   title: String!
   description: String!
   price: Float!
   date: String!
+}
+
+input UserInput {
+  email: String!
+  password: String!
 }
 
 type RootQuery {
@@ -19,6 +29,7 @@ type RootQuery {
 
 type RootMutation {
   createEvent(event: EventInput!): Event
+  createUser(user: UserInput!): User
 }
 
 schema {
