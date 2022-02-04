@@ -1,5 +1,5 @@
 const Booking = require('../../models/booking');
-const Event = require('../../models/event'); 
+const Event = require('../../models/event');
 const { user, singleEvent } = require('./helpers');
 
 module.exports = {
@@ -18,19 +18,38 @@ module.exports = {
     }
   },
   bookEvent: async (args) => {
-    const event = await Event.findById(args.eventId);
-    const booking = new Booking({
-      user: '61fceafbfa783b3601b6641b',
-      event
-    });
+    try {
+      const event = await Event.findById(args.eventId);
+      const booking = new Booking({
+        user: '61fceafbfa783b3601b6641b',
+        event
+      });
 
-    const result = await booking.save();
-    return {
-      ...result._doc,
-      user: user.bind(this, booking._doc.user),
-      event: singleEvent.bind(this, booking._doc.event),
-      createdAt: new Date(result._doc.createdAt).toISOString(),
-      updatedAt: new Date(result._doc.updatedAt).toISOString(),
+      const result = await booking.save();
+      return {
+        ...result._doc,
+        user: user.bind(this, booking._doc.user),
+        event: singleEvent.bind(this, booking._doc.event),
+        createdAt: new Date(result._doc.createdAt).toISOString(),
+        updatedAt: new Date(result._doc.updatedAt).toISOString(),
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+  cancelBooking: async (args) => {
+    try {
+      // populate gets the event data using the ref attribute in the model
+      const booking = await Booking.findById(args.bookingId).populate('event');
+      const event = {
+        ...booking._doc.event._doc,
+        creator: user.bind(this, booking._doc.event._doc.creator)
+      };
+
+      await Booking.deleteOne({ _id: args.bookingId });
+      return event;
+    } catch (err) {
+      throw err;
     }
   }
 }

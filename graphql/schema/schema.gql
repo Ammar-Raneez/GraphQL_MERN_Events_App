@@ -42,7 +42,7 @@ type RootMutation {
   createEvent(event: EventInput!): Event
   createUser(user: UserInput!): User
   bookEvent(eventId: ID): Booking!
-  cancelBooking(eventId: ID): Event!
+  cancelBooking(bookingId: ID): Event!
 }
 
 schema {
