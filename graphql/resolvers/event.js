@@ -10,8 +10,12 @@ module.exports = {
       return transformEvent(event);
     });
   },
-  createEvent: async (args) => {
-    const creatorId = '61fceafbfa783b3601b6641b';
+  createEvent: async (args, req) => {
+    if (!req.isAuth) {
+      throw new Error('Unauthenticated');
+    }
+
+    const creatorId = req.userId;
     const event = new Event({
       title: args.event.title,
       description: args.event.description,
