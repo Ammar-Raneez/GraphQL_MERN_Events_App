@@ -18,7 +18,8 @@
     "graphql": "^16.3.0",
     "graphql-import": "^1.0.2",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.2.0"
+    "mongoose": "^6.2.0",
+    "react-router-dom": "5.2.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
