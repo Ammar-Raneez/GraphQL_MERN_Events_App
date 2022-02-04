@@ -4,11 +4,13 @@ type Event {
   description: String!
   price: Float!
   date: String!
+  creator: User!
 }
 
 type User {
   id: ID!
   email: String!
+  createdEvents: [Event!]
 }
 
 input EventInput {

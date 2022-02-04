@@ -2,8 +2,16 @@ const Event = require('../../models/event');
 const User = require('../../models/user');
 
 module.exports = {
-  events: () => {
-    return Event.find();
+  events: async () => {
+    const events = await Event.find();
+    return events.map(async (event) => {
+      const creator = await user(event.creator);
+      return {
+        ...event._doc,
+        id: event._id,
+        creator
+      }
+    });
   },
   createEvent: async (args) => {
     const creator = '61fceafbfa783b3601b6641b';
@@ -26,5 +34,35 @@ module.exports = {
       console.log(err);
       throw err;
     }
+  }
+}
+
+const user = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const createdEvents = await events(user.createdEvents);
+    return {
+      ...user._doc,
+      id: user._id,
+      createdEvents
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+const events = async (eventIds) => {
+  try {
+    const events = await Event.find({ _id: { $in: eventIds } });
+    return events.map(async (event) => {
+      const creator = await user(event.creator);
+      return {
+        ...event._doc,
+        id: event._id,
+        creator,
+      };
+    });
+  } catch (err) {
+    throw err;
   }
 }
