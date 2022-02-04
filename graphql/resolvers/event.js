@@ -5,31 +5,32 @@ module.exports = {
   events: async () => {
     const events = await Event.find();
     return events.map(async (event) => {
-      const creator = await user(event.creator);
       return {
         ...event._doc,
         date: new Date(event._doc.date).toISOString(),
-        creator
+        creator: user.bind(this, event._doc.creator),
       }
     });
   },
   createEvent: async (args) => {
-    const creator = '61fceafbfa783b3601b6641b';
+    const creatorId = '61fceafbfa783b3601b6641b';
     const event = new Event({
       title: args.event.title,
       description: args.event.description,
       price: +args.event.price,
       date: new Date(args.event.date).toISOString(),
-
-      // mongoose automatically converts this to ObjectId
-      creator
+      creator: creatorId,
     });
 
     try {
-      const user = await User.findById(creator);
-      user.createdEvents.push(event);
-      await user.save();
-      return event.save();
+      const creator = await User.findById(creatorId);
+      creator.createdEvents.push(event);
+      await creator.save();
+      await event.save();
+      return {
+        ...event,
+        creator: user.bind(this, event.creator)
+      };
     } catch (err) {
       console.log(err);
       throw err;
@@ -40,10 +41,9 @@ module.exports = {
 const user = async (userId) => {
   try {
     const user = await User.findById(userId);
-    const createdEvents = await events(user.createdEvents);
     return {
       ...user._doc,
-      createdEvents
+      createdEvents: events.bind(this, user._doc.createdEvents)
     }
   } catch (err) {
     throw err;
@@ -54,11 +54,10 @@ const events = async (eventIds) => {
   try {
     const events = await Event.find({ _id: { $in: eventIds } });
     return events.map(async (event) => {
-      const creator = await user(event.creator);
       return {
         ...event._doc,
         date: new Date(event._doc.date).toISOString(),
-        creator,
+        creator: user.bind(this, event._doc.creator),
       };
     });
   } catch (err) {
