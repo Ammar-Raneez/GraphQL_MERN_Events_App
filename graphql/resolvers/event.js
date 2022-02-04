@@ -8,7 +8,7 @@ module.exports = {
       const creator = await user(event.creator);
       return {
         ...event._doc,
-        id: event._id,
+        date: new Date(event._doc.date).toISOString(),
         creator
       }
     });
@@ -19,7 +19,7 @@ module.exports = {
       title: args.event.title,
       description: args.event.description,
       price: +args.event.price,
-      date: new Date(args.event.date),
+      date: new Date(args.event.date).toISOString(),
 
       // mongoose automatically converts this to ObjectId
       creator
@@ -43,7 +43,6 @@ const user = async (userId) => {
     const createdEvents = await events(user.createdEvents);
     return {
       ...user._doc,
-      id: user._id,
       createdEvents
     }
   } catch (err) {
@@ -58,7 +57,7 @@ const events = async (eventIds) => {
       const creator = await user(event.creator);
       return {
         ...event._doc,
-        id: event._id,
+        date: new Date(event._doc.date).toISOString(),
         creator,
       };
     });
