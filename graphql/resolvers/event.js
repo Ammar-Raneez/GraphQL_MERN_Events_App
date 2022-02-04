@@ -1,16 +1,20 @@
 const Event = require('../../models/event');
 const User = require('../../models/user');
-const { user } = require('./helpers');
+const { user, dateToString } = require('./helpers');
+
+const transformEvent = (event) => {
+  return {
+    ...event._doc,
+    date: dateToString(event._doc.date),
+    creator: user.bind(this, event._doc.creator),
+  }
+}
 
 module.exports = {
   events: async () => {
     const events = await Event.find();
     return events.map(async (event) => {
-      return {
-        ...event._doc,
-        date: new Date(event._doc.date).toISOString(),
-        creator: user.bind(this, event._doc.creator),
-      }
+      return transformEvent(event);
     });
   },
   createEvent: async (args) => {
@@ -19,7 +23,7 @@ module.exports = {
       title: args.event.title,
       description: args.event.description,
       price: +args.event.price,
-      date: new Date(args.event.date).toISOString(),
+      date: dateToString(args.event.date),
       creator: creatorId,
     });
 
@@ -27,11 +31,8 @@ module.exports = {
       const creator = await User.findById(creatorId);
       creator.createdEvents.push(event);
       await creator.save();
-      await event.save();
-      return {
-        ...event,
-        creator: user.bind(this, event.creator)
-      };
+      const savedEvent = await event.save();
+      return transformEvent(savedEvent);
     } catch (err) {
       console.log(err);
       throw err;

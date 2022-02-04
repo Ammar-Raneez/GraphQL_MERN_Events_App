@@ -1,18 +1,6 @@
 const Event = require('../../models/event');
 const User = require('../../models/user');
 
-const user = async (userId) => {
-  try {
-    const user = await User.findById(userId);
-    return {
-      ...user._doc,
-      createdEvents: events.bind(this, user._doc.createdEvents)
-    }
-  } catch (err) {
-    throw err;
-  }
-}
-
 const events = async (eventIds) => {
   try {
     const events = await Event.find({ _id: { $in: eventIds } });
@@ -23,6 +11,18 @@ const events = async (eventIds) => {
         creator: user.bind(this, event._doc.creator),
       };
     });
+  } catch (err) {
+    throw err;
+  }
+}
+
+const user = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    return {
+      ...user._doc,
+      createdEvents: events.bind(this, user._doc.createdEvents)
+    }
   } catch (err) {
     throw err;
   }
@@ -40,8 +40,12 @@ const singleEvent = async (eventId) => {
   }
 }
 
+const dateToString = (date) => {
+  return new Date(date).toISOString();
+}
+
 module.exports = {
   user,
-  events,
-  singleEvent
+  singleEvent,
+  dateToString
 }
