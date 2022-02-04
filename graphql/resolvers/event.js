@@ -1,19 +1,24 @@
+const Event = require("../../models/event");
+
 const events = [];
 
 module.exports = {
   events: () => {
     return events;
   },
-  createEvent: (args) => {
-    const event = {
-      _id: Math.random().toString(),
+  createEvent: async (args) => {
+    const event = new Event({
       title: args.event.title,
       description: args.event.description,
       price: +args.event.price,
-      date: new Date().toISOString(),
-    }
+      date: new Date(args.event.date),
+    });
 
-    events.push(event);
-    return event;
+    try {
+      return await event.save();
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
   }
 }
