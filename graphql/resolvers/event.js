@@ -1,12 +1,10 @@
-const Event = require("../../models/event");
-
-const events = [];
+const Event = require('../../models/event');
 
 module.exports = {
   events: () => {
-    return events;
+    return Event.find();
   },
-  createEvent: async (args) => {
+  createEvent: (args) => {
     const event = new Event({
       title: args.event.title,
       description: args.event.description,
@@ -15,7 +13,7 @@ module.exports = {
     });
 
     try {
-      return await event.save();
+      return event.save();
     } catch (err) {
       console.log(err);
       throw err;
