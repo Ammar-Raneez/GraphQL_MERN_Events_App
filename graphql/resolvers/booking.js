@@ -1,17 +1,6 @@
 const Booking = require('../../models/booking');
 const Event = require('../../models/event');
-const { user, singleEvent } = require('./merge');
-const { dateToString } = require('../../utils/util');
-
-const transformBooking = (booking) => {
-  return {
-    ...booking._doc,
-    user: user.bind(this, booking._doc.user),
-    event: singleEvent.bind(this, booking._doc.event),
-    createdAt: dateToString(booking._doc.createdAt),
-    updatedAt: dateToString(booking._doc.updatedAt),
-  };
-}
+const { transformBooking, transformEvent } = require('./merge');
 
 module.exports = {
   bookings: async () => {
@@ -40,13 +29,8 @@ module.exports = {
     try {
       // populate gets the event data using the ref attribute in the model
       const booking = await Booking.findById(args.bookingId).populate('event');
-      const event = {
-        ...booking._doc.event._doc,
-        creator: user.bind(this, booking._doc.event._doc.creator)
-      };
-
       await Booking.deleteOne({ _id: args.bookingId });
-      return event;
+      return transformEvent(booking._doc.event);
     } catch (err) {
       throw err;
     }
