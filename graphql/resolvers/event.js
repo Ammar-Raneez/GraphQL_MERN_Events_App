@@ -1,6 +1,7 @@
 const Event = require('../../models/event');
 const User = require('../../models/user');
-const { user, dateToString } = require('./helpers');
+const { user } = require('./merge');
+const { dateToString } = require('../../utils/util');
 
 const transformEvent = (event) => {
   return {

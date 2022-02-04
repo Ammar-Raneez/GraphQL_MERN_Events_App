@@ -1,6 +1,7 @@
 const Booking = require('../../models/booking');
 const Event = require('../../models/event');
-const { user, singleEvent, dateToString } = require('./helpers');
+const { user, singleEvent } = require('./merge');
+const { dateToString } = require('../../utils/util');
 
 const transformBooking = (booking) => {
   return {

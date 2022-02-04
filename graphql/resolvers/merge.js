@@ -40,12 +40,9 @@ const singleEvent = async (eventId) => {
   }
 }
 
-const dateToString = (date) => {
-  return new Date(date).toISOString();
-}
+
 
 module.exports = {
   user,
-  singleEvent,
-  dateToString
+  singleEvent
 }
