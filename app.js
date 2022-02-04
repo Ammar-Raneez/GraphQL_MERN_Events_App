@@ -2,7 +2,9 @@ const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 const { importSchema } = require('graphql-import');
+const mongoose = require('mongoose');
 const rootResolver = require('./graphql/resolvers');
+require('dotenv').config();
 
 const app = express();
 app.use(express.json());
@@ -15,4 +17,11 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true,
 }));
 
-app.listen(3000);
+mongoose.connect(
+  process.env.MONGO_URI
+).then(() => {
+  console.log('Connected to mongoDB');
+  app.listen(3000);
+}).catch((err) => {
+  console.log(err);
+});
