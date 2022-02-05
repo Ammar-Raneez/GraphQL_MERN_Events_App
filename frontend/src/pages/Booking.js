@@ -8,6 +8,7 @@ import { BASE_URL } from '../utils/util';
 
 function Booking() {
   const [isLoading, setIsLoading] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const [outputType, setOutputType] = useState('list');
   const [bookings, setBookings] = useState([]);
   const [stateValue] = useStateValue();
@@ -52,7 +53,7 @@ function Booking() {
     }
 
     getEvents();
-  }, [stateValue?.user.token]);
+  }, [stateValue?.user.token, removing]);
 
   const changeOutputTypeHandler = (outputType) => {
     if (outputType === 'list') {
@@ -62,12 +63,42 @@ function Booking() {
     }
   };
 
-  const deleteBookingHandler = () => {
+  const deleteBookingHandler = async (bookingId) => {
+    setRemoving(true);
+    const requestBody = {
+      query: `
+        mutation CancelBooking($id: ID!) {
+          cancelBooking(bookingId: $id) {
+            _id
+            title
+          }
+        }
+      `,
+      variables: {
+        id: bookingId
+      }
+    };
 
+    try {
+      const response = await fetch(BASE_URL, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + stateValue?.user.token
+        }
+      });
+
+      await response.json();
+      setRemoving(false);
+    } catch (err) {
+      setRemoving(false);
+      throw new Error(err);
+    }
   }
 
   let content = <Spinner />;
-  if (!isLoading) {
+  if (!isLoading && !removing) {
     content = (
       <React.Fragment>
         <BookingsControls
