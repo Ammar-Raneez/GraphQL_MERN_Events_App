@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useStateValue } from '../context/auth-context';
 import Backdrop from '../components/Backdrop/Backdrop';
 import EventList from '../components/Events/EventList/EventList';
@@ -12,12 +12,54 @@ function Event() {
   const [isLoading, setIsLoading] = useState(false);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [stateValue, dispatch] = useStateValue();
+  const [stateValue] = useStateValue();
 
   const titleElRef = useRef();
   const priceElRef = useRef();
   const dateElRef = useRef();
   const descriptionElRef = useRef();
+
+  useEffect(() => {
+    setIsLoading(true);
+    const getEvents = async () => {
+      const requestBody = {
+        query: `
+          query {
+            events {
+              _id
+              title
+              description
+              date
+              price
+              creator {
+                _id
+                email
+              }
+            }
+          }
+        `
+      };
+
+      try {
+        const response = await fetch(BASE_URL, {
+          method: 'POST',
+          body: JSON.stringify(requestBody),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const responseData = await response.json();
+        setEvents(responseData.data.events);
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        throw new Error(err);
+      }
+    }
+
+    getEvents();
+  }, [creating]);
 
   const modalCancelHandler = () => {
     setCreating(false);
@@ -25,7 +67,6 @@ function Event() {
   }
 
   const modalConfirmHandler = async () => {
-    setCreating(false);
     const title = titleElRef.current.value;
     const price = +priceElRef.current.value;
     const date = dateElRef.current.value;
@@ -80,18 +121,20 @@ function Event() {
         }
       }
 
+      setCreating(false);
       setEvents([...events, event]);
     } catch (err) {
+      setCreating(false);
       throw new Error('Failed!');
     }
   }
 
-  const bookEventHandler = () => {
-
-  }
-
   const startCreateEventHandler = () => {
     setCreating(true);
+  }
+
+  const bookEventHandler = () => {
+
   }
 
   const showDetailHandler = () => {
