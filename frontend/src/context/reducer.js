@@ -5,7 +5,8 @@ export const initialState = {
 }
 
 export const actionTypes = {
-  SET_USER: 'SET_USER'
+  SET_USER: 'SET_USER',
+  REMOVE_USER: 'REMOVE_USER'
 }
 
 const reducer = (state, action) => {
@@ -13,6 +14,14 @@ const reducer = (state, action) => {
     case actionTypes.SET_USER:
       return {
         ...state, user: action.user
+      }
+    case actionTypes.REMOVE_USER:
+      return {
+        user: {
+          token: null,
+          userid: null,
+          tokenExpiration: null
+        }
       }
     default:
       return state
