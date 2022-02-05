@@ -21,10 +21,8 @@ const BookingsChart = (props) => {
   let values = [];
   for (const bucket in BOOKINGS_BUCKETS) {
     const filteredBookingsCount = props.bookings.reduce((prev, current) => {
-      if (
-        current.event.price > BOOKINGS_BUCKETS[bucket].min &&
-        current.event.price < BOOKINGS_BUCKETS[bucket].max
-      ) {
+      if (current.event.price > BOOKINGS_BUCKETS[bucket].min
+        && current.event.price < BOOKINGS_BUCKETS[bucket].max) {
         return prev + 1;
       } else {
         return prev;
@@ -33,11 +31,11 @@ const BookingsChart = (props) => {
     values.push(filteredBookingsCount);
     chartData.labels.push(bucket);
     chartData.datasets.push({
-      // label: "My First dataset",
-      fillColor: 'rgba(220,220,220,0.5)',
-      strokeColor: 'rgba(220,220,220,0.8)',
-      highlightFill: 'rgba(220,220,220,0.75)',
-      highlightStroke: 'rgba(220,220,220,1)',
+      label: "Bookings",
+      fillColor: 'rgba(0,100,100,0.5)',
+      strokeColor: 'rgba(0,100,100,0.8)',
+      highlightFill: 'rgba(0,100,100,0.75)',
+      highlightStroke: 'rgba(0,100,100,1)',
       data: values
     });
     values = [...values];

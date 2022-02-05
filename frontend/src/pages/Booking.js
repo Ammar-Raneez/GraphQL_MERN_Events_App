@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useStateValue } from '../context/auth-context';
-// import BookingsChart from '../components/Bookings/BookingChart/BookingChart';
+import BookingsChart from '../components/Bookings/BookingChart/BookingChart';
 import BookingsControls from '../components/Bookings/BookingControls/BookingControls';
 import BookingList from '../components/Bookings/BookingList/BookingList';
 import Spinner from '../components/Spinner/Spinner';
@@ -113,8 +113,7 @@ function Booking() {
               onDelete={deleteBookingHandler}
             />
           ) : (
-            <></>
-            // <BookingsChart bookings={bookings} />
+            <BookingsChart bookings={bookings} />
           )}
         </div>
       </React.Fragment>
