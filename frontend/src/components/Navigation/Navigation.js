@@ -1,8 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useStateValue } from '../../context/auth-context';
 import './Navigation.css';
 
 function Navigation() {
+  const [stateValue] = useStateValue();
+
   return (
     <header className="main-navigation">
       <div className="main-navigation__logo">
@@ -10,15 +13,19 @@ function Navigation() {
       </div>
       <nav className="main-navigation__items">
         <ul>
-          <li>
-            <NavLink to="/auth">Authenticate</NavLink>
-          </li>
+          {!stateValue?.user?.token && (
+            <li>
+              <NavLink to="/auth">Authenticate</NavLink>
+            </li>
+          )}
           <li>
             <NavLink to="/events">Events</NavLink>
           </li>
-          <li>
-            <NavLink to="/bookings">Bookings</NavLink>
-          </li>
+          {stateValue?.user?.token && (
+            <li>
+              <NavLink to="/bookings">Bookings</NavLink>
+            </li>
+          )}
         </ul>
       </nav>
     </header>

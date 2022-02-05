@@ -1,7 +1,11 @@
 import React, { useRef, useState } from 'react';
+import { useStateValue } from '../context/auth-context';
+import { actionTypes } from '../context/reducer';
 import './Auth.css';
 
 function Auth() {
+  // eslint-disable-next-line no-unused-vars
+  const [_, dispatch] = useStateValue();
   const [isLogIn, setisLogIn] = useState(false);
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -46,8 +50,15 @@ function Auth() {
         'Content-Type': 'application/json'
       }
     });
-    const data = await response.json();
-    console.log(data);
+
+    const resData = await response.json();
+    if (resData?.data?.login) {
+      const loginData = resData?.data?.login;
+      dispatch({
+        type: actionTypes.SET_USER,
+        user: loginData
+      });
+    }
   }
 
   return (
