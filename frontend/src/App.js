@@ -14,7 +14,6 @@ function App() {
       <Navigation />
       <main className="main-content">
         <Switch>
-          {!stateValue?.user?.token && <Redirect from="/" to="/auth" exact />}
           {!stateValue?.user?.token && <Route path="/auth" component={Auth} />}
           {stateValue?.user?.token && <Redirect from="/" to="/events" exact />}
           {stateValue?.user?.token && <Redirect from="/auth" to="/events" exact />}
@@ -22,6 +21,7 @@ function App() {
           {stateValue?.user?.token && (
             <Route path="/bookings" component={Booking} />
           )}
+          {!stateValue?.user?.token && <Redirect to="/auth" exact />}
         </Switch>
       </main>
     </BrowserRouter>
