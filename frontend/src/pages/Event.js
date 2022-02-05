@@ -134,11 +134,15 @@ function Event() {
   }
 
   const bookEventHandler = () => {
-
+    if (!stateValue?.user.token) {
+      setSelectedEvent(null);
+      return;
+    }
   }
 
-  const showDetailHandler = () => {
-
+  const showDetailHandler = (eventId) => {
+    const event = events.find((event) => event._id === eventId);
+    setSelectedEvent(event);
   }
 
   return (
