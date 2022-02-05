@@ -5,6 +5,7 @@ import EventList from '../components/Events/EventList/EventList';
 import Modal from '../components/Modal/Modal';
 import Spinner from '../components/Spinner/Spinner';
 import './Event.css';
+import { BASE_URL } from '../utils/util';
 
 function Event() {
   const [creating, setCreating] = useState(false);
@@ -23,8 +24,66 @@ function Event() {
     setSelectedEvent(null);
   }
 
-  const modalConfirmHandler = () => {
+  const modalConfirmHandler = async () => {
     setCreating(false);
+    const title = titleElRef.current.value;
+    const price = +priceElRef.current.value;
+    const date = dateElRef.current.value;
+    const description = descriptionElRef.current.value;
+
+    if (title.trim().length === 0 || price <= 0
+      || date.trim().length === 0 || description.trim().length === 0) {
+      return;
+    }
+
+    const token = stateValue?.user.token;
+
+    const requestBody = {
+      query: `
+        mutation createEvent($title: String!, $desc: String!, $price: Float!, $date: String!) {
+          createEvent(event: { title: $title, description: $desc, price: $price, date: $date}) {
+            _id
+            title
+            description
+            date
+            price
+          }
+        }
+      `,
+      variables: {
+        desc: description,
+        title,
+        price,
+        date,
+      }
+    }
+
+    try {
+      const response = await fetch(BASE_URL, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        }
+      });
+
+      const responseData = await response.json();
+      const event = {
+        _id: responseData.data.createEvent._id,
+        title: responseData.data.createEvent.title,
+        description: responseData.data.createEvent.description,
+        date: responseData.data.createEvent.date,
+        price: responseData.data.createEvent.price,
+        creator: {
+          _id: this.context.userId
+        }
+      }
+
+      setEvents([...events, event]);
+    } catch (err) {
+      throw new Error('Failed!');
+    }
   }
 
   const bookEventHandler = () => {

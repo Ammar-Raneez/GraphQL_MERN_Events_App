@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { useStateValue } from '../context/auth-context';
 import { actionTypes } from '../context/reducer';
+import { BASE_URL } from '../utils/util';
 import './Auth.css';
 
 function Auth() {
@@ -43,7 +44,7 @@ function Auth() {
       };
     }
 
-    const response = await fetch('http://localhost:8000/graphql', {
+    const response = await fetch(BASE_URL, {
       method: 'POST',
       body: JSON.stringify(requestBody),
       headers: {
