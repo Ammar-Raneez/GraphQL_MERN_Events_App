@@ -53,7 +53,7 @@ function Booking() {
     }
 
     getEvents();
-  }, [stateValue?.user.token, removing]);
+  }, [stateValue?.user.token]);
 
   const changeOutputTypeHandler = (outputType) => {
     if (outputType === 'list') {
@@ -90,6 +90,7 @@ function Booking() {
       });
 
       await response.json();
+      setBookings(bookings.filter((booking) => booking._id !== bookingId));
       setRemoving(false);
     } catch (err) {
       setRemoving(false);
