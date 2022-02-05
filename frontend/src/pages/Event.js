@@ -133,10 +133,42 @@ function Event() {
     setCreating(true);
   }
 
-  const bookEventHandler = () => {
+  const bookEventHandler = async () => {
     if (!stateValue?.user.token) {
       setSelectedEvent(null);
       return;
+    }
+
+    const requestBody = {
+      query: `
+        mutation bookEvent($id: ID!) {
+          bookEvent(eventId: $id) {
+            _id
+            createdAt
+            updatedAt
+          }
+        }
+      `,
+      variables: {
+        id: selectedEvent._id
+      }
+    };
+
+    try {
+      const response = await fetch(BASE_URL, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + stateValue?.user.token
+        }
+      });
+
+      await response.json();
+      setSelectedEvent(null);
+    } catch (err) {
+      setSelectedEvent(null);
+      throw new Error('Failed!');
     }
   }
 
